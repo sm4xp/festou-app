@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Festou">
+<title>Festou</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23E85D75'/%3E%3Cstop offset='100%25' stop-color='%23FF8A65'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='url(%23g)'/%3E%3Cpath d='M22 44V24l6-8h8l6 8v20' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M22 34h20' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='20' cy='18' r='2.5' fill='%23FFD54F'/%3E%3Ccircle cx='44' cy='16' r='2' fill='%2381D4FA'/%3E%3Ccircle cx='38' cy='12' r='1.8' fill='%23CE93D8'/%3E%3Ccircle cx='26' cy='13' r='1.5' fill='%23A5D6A7'/%3E%3Ccircle cx='46' cy='22' r='1.5' fill='%23FFD54F'/%3E%3C/svg%3E">
+<style>
+:root {
+  --accent: #E85D75;
+  --accent-light: #F0A0AF;
+  --accent-dark: #C94A62;
+  --accent-rgb: 232, 93, 117;
+  --bg: #FAFAF8;
+  --bg-card: #FFFFFF;
+  --bg-input: #F3F3F0;
+  --text: #2C2C30;
+  --text-secondary: #6B6B72;
+  --text-tertiary: #9C9CA3;
+  --border: #E4E4E0;
+  --green: #34A853;
+  --green-bg: #E8F5EB;
+  --green-border: #B8DFC2;
+  --yellow: #D4A017;
+  --yellow-bg: #FFF8E1;
+  --yellow-border: #F0D98C;
+  --red: #D93025;
+  --red-bg: #FDECEA;
+  --red-border: #F5B7B1;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.1);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-xs: 6px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141418;
+    --bg-card: #1E1E24;
+    --bg-input: #28282E;
+    --text: #EAEAED;
+    --text-secondary: #A0A0A8;
+    --text-tertiary: #6E6E78;
+    --border: #333339;
+    --green-bg: #1A2E1F;
+    --green-border: #2D5A38;
+    --yellow-bg: #2E2A14;
+    --yellow-border: #5A4E1F;
+    --red-bg: #2E1A18;
+    --red-border: #5A2D28;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.35);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141418;
+  --bg-card: #1E1E24;
+  --bg-input: #28282E;
+  --text: #EAEAED;
+  --text-secondary: #A0A0A8;
+  --text-tertiary: #6E6E78;
+  --border: #333339;
+  --green-bg: #1A2E1F;
+  --green-border: #2D5A38;
+  --yellow-bg: #2E2A14;
+  --yellow-border: #5A4E1F;
+  --red-bg: #2E1A18;
+  --red-border: #5A2D28;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.35);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: background 0.3s;
+}
+
+h1, h2, h3, h4 {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+
+.view { display: none; max-width: 900px; margin: 0 auto; padding-top: 40px; padding-bottom: 40px; }
+.view.active { display: block; }
+
+.onboarding {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  gap: 40px;
+  text-align: center;
+}
+.onboarding.active { display: flex; }
+.onboarding-logo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.festou-logo-icon {
+  width: 80px;
+  height: 80px;
+}
+.festou-logo-small {
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+.onboarding-logo {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -1px;
+}
+.onboarding-subtitle {
+  color: var(--text-secondary);
+  font-size: 15px;
+  margin-top: 4px;
+}
+.field-group { width: 100%; text-align: left; }
+.field-label {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 8px;
+  display: block;
+}
+input[type="text"], input[type="number"], input[type="date"], input[type="time"], select, textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text);
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.2s;
+  outline: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+}
+textarea { resize: vertical; min-height: 80px; }
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+.color-swatch {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+}
+.color-swatch:hover { transform: scale(1.1); }
+.color-swatch.selected { border-color: var(--text); transform: scale(1.15); }
+.color-custom-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.color-custom-wrap input[type="color"] {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+}
+.color-custom-wrap span {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.15s;
+  color: #fff;
+  background: var(--accent);
+}
+.btn:hover { opacity: 0.9; }
+.btn:active { transform: scale(0.97); }
+.btn-outline {
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+}
+.btn-outline:hover { background: rgba(var(--accent-rgb), 0.08); }
+.btn-sm { padding: 8px 16px; font-size: 13px; }
+.btn-danger { background: var(--red); }
+.btn-block { width: 100%; }
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 18px;
+}
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.welcome-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+  gap: 20px;
+}
+.welcome-screen.active { display: flex; }
+.welcome-title {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.welcome-emoji { font-size: 56px; margin-bottom: 8px; }
+
+.party-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.party-list-header h1 { font-size: 28px; font-weight: 700; }
+.greeting-text { color: var(--text-secondary); font-size: 14px; }
+
+.party-cards { display: grid; gap: 16px; }
+.party-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.party-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--accent);
+}
+.party-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.party-card-title {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  padding-left: 8px;
+}
+.party-card-meta {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding-left: 8px;
+}
+.party-card-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  padding-left: 8px;
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+.empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 15px; }
+
+.dash-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.dash-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 16px;
+}
+.dash-back:hover { color: var(--accent); }
+.dash-title { font-size: 26px; font-weight: 700; }
+.dash-meta { color: var(--text-secondary); font-size: 14px; margin-top: 4px; }
+.countdown-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(var(--accent-rgb), 0.12);
+  color: var(--accent);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+.stat-label {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.stat-value {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.stat-value.green { color: var(--green); }
+.stat-value.yellow { color: var(--yellow); }
+.stat-value.red { color: var(--red); }
+.stat-value.accent { color: var(--accent); }
+
+.dash-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-step { display: none; }
+.form-step.active { display: block; }
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.type-option {
+  padding: 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  transition: border-color 0.15s, background 0.15s;
+  background: var(--bg-card);
+}
+.type-option:hover { border-color: var(--accent); }
+.type-option.selected {
+  border-color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.1);
+  color: var(--accent);
+}
+.type-option-icon { font-size: 24px; display: block; margin-bottom: 6px; }
+
+.kanban {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+@media (max-width: 700px) {
+  .kanban { grid-template-columns: 1fr; }
+}
+.kanban-col {
+  border-radius: var(--radius);
+  padding: 12px;
+  min-height: 200px;
+}
+.kanban-col.confirmed { background: var(--green-bg); border: 1px solid var(--green-border); }
+.kanban-col.maybe { background: var(--yellow-bg); border: 1px solid var(--yellow-border); }
+.kanban-col.no { background: var(--red-bg); border: 1px solid var(--red-border); }
+.kanban-col-header {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.kanban-count {
+  font-size: 12px;
+  font-weight: 500;
+  background: rgba(0,0,0,0.08);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.guest-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-xs);
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s, transform 0.1s;
+  user-select: none;
+  touch-action: none;
+}
+.guest-card:active { cursor: grabbing; }
+.guest-card.dragging { opacity: 0.5; transform: scale(0.95); }
+.guest-card-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.guest-card:hover .guest-card-actions { opacity: 1; }
+.guest-action-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: var(--bg-input);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+.guest-action-btn:hover { background: var(--border); }
+.kanban-col.drag-over { outline: 2px dashed var(--accent); outline-offset: -2px; }
+
+.add-guest-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.add-guest-row input { flex: 1; }
+.add-guest-row select { width: 160px; flex: none; }
+
+.budget-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.budget-table-wrap {
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+.budget-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.budget-table th {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--border);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.budget-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-variant-numeric: tabular-nums;
+}
+.budget-table tr:hover td { background: var(--bg-input); }
+.status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.status-badge.paid { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.status-badge.pending { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
+.status-badge.unpaid { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+
+.alert-over {
+  background: var(--red-bg);
+  border: 1px solid var(--red-border);
+  color: var(--red);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 24px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+.modal h3 { margin-bottom: 16px; }
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+.tab-btn {
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-btn:hover { color: var(--text); }
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.info-item {
+  padding: 12px;
+  background: var(--bg-input);
+  border-radius: var(--radius-xs);
+}
+.info-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; }
+.info-value { font-size: 15px; font-weight: 500; margin-top: 2px; }
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--text);
+  color: var(--bg);
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  z-index: 200;
+  transition: transform 0.3s;
+  pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .budget-summary { grid-template-columns: repeat(2, 1fr); }
+  .form-grid { grid-template-columns: 1fr; }
+  .type-grid { grid-template-columns: repeat(2, 1fr); }
+  .dash-actions { flex-direction: column; }
+  .add-guest-row { flex-direction: column; }
+  .add-guest-row select { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ONBOARDING -->
+<div id="onboarding" class="onboarding active">
+  <div>
+    <div class="onboarding-logo-wrap">
+      <svg class="festou-logo-icon" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="var(--accent)"/>
+            <stop offset="100%" stop-color="var(--accent-light)"/>
+          </linearGradient>
+        </defs>
+        <circle cx="40" cy="40" r="38" fill="url(#logoGrad)"/>
+        <!-- Party hat -->
+        <path d="M28 58V32l12-18 12 18v26" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M28 42h24" stroke="white" stroke-width="3" stroke-linecap="round"/>
+        <path d="M28 50h24" stroke="white" stroke-width="3" stroke-linecap="round"/>
+        <!-- Confetti -->
+        <circle cx="18" cy="20" r="3.5" fill="#FFD54F"/>
+        <circle cx="62" cy="18" r="3" fill="#81D4FA"/>
+        <circle cx="52" cy="10" r="2.5" fill="#CE93D8"/>
+        <circle cx="28" cy="12" r="2" fill="#A5D6A7"/>
+        <circle cx="64" cy="30" r="2" fill="#FFD54F"/>
+        <circle cx="14" cy="34" r="2.5" fill="#FF8A80"/>
+        <rect x="56" y="12" width="3" height="3" rx="0.5" fill="#FFAB91" transform="rotate(30 57.5 13.5)"/>
+        <rect x="22" y="8" width="2.5" height="2.5" rx="0.5" fill="#80CBC4" transform="rotate(-20 23 9)"/>
+      </svg>
+      <div class="onboarding-logo">Festou</div>
+    </div>
+    <p class="onboarding-subtitle">Seu assistente de festas</p>
+  </div>
+  <div class="field-group">
+    <label class="field-label">Como podemos te chamar?</label>
+    <input type="text" id="userName" placeholder="Seu nome">
+  </div>
+  <div class="field-group">
+    <label class="field-label">Escolha a cor do Festou</label>
+    <div class="color-grid" id="colorGrid"></div>
+    <div class="color-custom-wrap">
+      <input type="color" id="customColor" value="#E85D75">
+      <span>Ou escolha qualquer cor</span>
+    </div>
+  </div>
+  <button class="btn btn-block" id="btnContinue" onclick="finishOnboarding()">Continuar</button>
+</div>
+
+<!-- WELCOME -->
+<div id="welcome" class="welcome-screen">
+  <div class="welcome-emoji">🎉</div>
+  <h1 class="welcome-title">Bem-vindo ao Festou, <span id="welcomeName"></span>!</h1>
+  <p style="color: var(--text-secondary)">Vamos planejar sua festa?</p>
+  <button class="btn" onclick="showCreateParty()">Criar Festa</button>
+</div>
+
+<!-- PARTY LIST -->
+<div id="partyList" class="view">
+  <div class="party-list-header">
+    <div>
+      <h1><svg class="festou-logo-small" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lgS" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="var(--accent)"/><stop offset="100%" stop-color="var(--accent-light)"/></linearGradient></defs><circle cx="40" cy="40" r="38" fill="url(#lgS)"/><path d="M28 58V32l12-18 12 18v26" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 42h24" stroke="white" stroke-width="3" stroke-linecap="round"/><path d="M28 50h24" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="18" cy="20" r="3.5" fill="#FFD54F"/><circle cx="62" cy="18" r="3" fill="#81D4FA"/><circle cx="52" cy="10" r="2.5" fill="#CE93D8"/></svg>Festou</h1>
+      <p class="greeting-text" id="greetingText"></p>
+    </div>
+    <button class="btn" onclick="showCreateParty()">+ Nova Festa</button>
+  </div>
+  <div id="partyCardsContainer"></div>
+</div>
+
+<!-- CREATE PARTY -->
+<div id="createParty" class="view">
+  <button class="dash-back" onclick="goBack()">&#8592; Voltar</button>
+  <h2 style="margin-bottom:24px">Criar Festa</h2>
+  <div id="step1" class="form-step active">
+    <h3 class="section-title">Qual será o tipo da festa?</h3>
+    <div class="type-grid" id="partyTypeGrid"></div>
+  </div>
+  <div id="step2" class="form-step">
+    <h3 class="section-title">Detalhes da festa</h3>
+    <div id="dynamicFields" class="form-grid"></div>
+    <div style="margin-top:16px;display:flex;gap:12px">
+      <button class="btn-outline btn" onclick="goToStep(1)">Voltar</button>
+      <button class="btn" onclick="saveParty()">Salvar Festa</button>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="view">
+  <button class="dash-back" onclick="showPartyList()">&#8592; Minhas festas</button>
+  <div class="dash-header">
+    <div>
+      <h1 class="dash-title" id="dashTitle"></h1>
+      <p class="dash-meta" id="dashMeta"></p>
+      <div class="countdown-badge" id="dashCountdown"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-sm btn-outline" onclick="editCurrentParty()">Editar</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteCurrentParty()">Excluir</button>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('overview',this)">Painel</button>
+    <button class="tab-btn" onclick="switchTab('info',this)">Detalhes</button>
+    <button class="tab-btn" onclick="switchTab('guests',this)">Convidados</button>
+    <button class="tab-btn" onclick="switchTab('budget',this)">Orçamento</button>
+  </div>
+  <div id="tab-overview" class="tab-content">
+    <div class="stats-grid" id="overviewStats"></div>
+  </div>
+  <div id="tab-info" class="tab-content" style="display:none">
+    <div class="info-grid" id="infoGrid"></div>
+  </div>
+  <div id="tab-guests" class="tab-content" style="display:none">
+    <div class="add-guest-row">
+      <input type="text" id="guestNameInput" placeholder="Nome do convidado">
+      <select id="guestStatusSelect">
+        <option value="confirmed">Confirmado</option>
+        <option value="maybe">Em dúvida</option>
+        <option value="no">Não convidar</option>
+      </select>
+      <button class="btn btn-sm" onclick="addGuest()">Adicionar</button>
+    </div>
+    <div class="kanban" id="kanbanBoard"></div>
+  </div>
+  <div id="tab-budget" class="tab-content" style="display:none">
+    <div class="field-group" style="margin-bottom:20px;max-width:300px">
+      <label class="field-label">Orçamento máximo (R$)</label>
+      <input type="number" id="maxBudgetInput" placeholder="0,00" onchange="saveMaxBudget()">
+    </div>
+    <div id="budgetAlert"></div>
+    <div class="budget-summary" id="budgetSummary"></div>
+    <div style="margin-bottom:16px">
+      <button class="btn btn-sm" onclick="showAddExpenseModal()">+ Adicionar despesa</button>
+    </div>
+    <div class="budget-table-wrap">
+      <table class="budget-table" id="budgetTable">
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th>Serviço</th>
+            <th>Fornecedor</th>
+            <th>Previsto</th>
+            <th>Pago</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="budgetBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PARTY MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3>Editar Festa</h3>
+    <div id="editFields" class="form-grid"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('editModal')">Cancelar</button>
+      <button class="btn btn-sm" onclick="saveEditParty()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD EXPENSE MODAL -->
+<div class="modal-overlay" id="expenseModal">
+  <div class="modal">
+    <h3 id="expenseModalTitle">Adicionar Despesa</h3>
+    <div style="display:grid;gap:12px">
+      <div class="field-group">
+        <label class="field-label">Categoria</label>
+        <select id="expCat">
+          <option>Buffet</option><option>Bebidas / Bar</option><option>Casa ou salão</option>
+          <option>Garçons</option><option>DJ</option><option>Banda</option><option>Decoração</option>
+          <option>Bolo</option><option>Doces</option><option>Fotógrafo</option><option>Filmagem</option>
+          <option>Convites</option><option>Lembrancinhas</option><option>Segurança</option>
+          <option>Iluminação</option><option>Mesas e cadeiras</option><option>Roupas</option><option>Outros</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Serviço ou produto</label>
+        <input type="text" id="expName">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Fornecedor</label>
+        <input type="text" id="expVendor">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Valor previsto (R$)</label>
+        <input type="number" id="expPlanned" step="0.01">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Valor pago (R$)</label>
+        <input type="number" id="expPaid" step="0.01">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Situação</label>
+        <select id="expStatus">
+          <option value="unpaid">A pagar</option>
+          <option value="pending">Parcialmente pago</option>
+          <option value="paid">Pago</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('expenseModal')">Cancelar</button>
+      <button class="btn btn-sm" onclick="saveExpense()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <h2 id="confirmTitle">Confirmar</h2>
+    <p id="confirmMsg" style="margin:12px 0 20px;color:var(--text-secondary)"></p>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('confirmModal')">Cancelar</button>
+      <button class="btn btn-sm btn-danger" id="confirmBtn" onclick="">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var COLORS = ['#E85D75','#7C4DFF','#2196F3','#00BFA5','#FF7043','#5C6BC0','#26A69A','#EC407A','#AB47BC','#66BB6A','#FFA726','#42A5F5'];
+var PARTY_TYPES = [
+  {id:'birthday',label:'Aniversário',icon:'🎂'},
+  {id:'wedding',label:'Casamento',icon:'💍'},
+  {id:'halloween',label:'Halloween',icon:'🎃'},
+  {id:'graduation',label:'Formatura',icon:'🎓'},
+  {id:'kids',label:'Festa Infantil',icon:'🧸'},
+  {id:'corporate',label:'Confraternização',icon:'🥂'},
+  {id:'theme',label:'Festa Temática',icon:'🎭'},
+  {id:'other',label:'Outro',icon:'🎊'}
+];
+var DRESS_CODES = ['Casual','Esporte fino','Social','Terno','Fantasia','Roupa de determinada cor','Livre','Outro'];
+var state = { userName:'', accentColor:'#E85D75', onboarded:false, parties:[], currentPartyId:null, selectedType:null, editingExpenseIdx:null };
+var draggedGuestId = null;
+var touchDragEl = null, touchClone = null, touchStartX = 0, touchStartY = 0, touchMoved = false;
+
+function load() { try { var s = localStorage.getItem('festou_state'); if (s) state = JSON.parse(s); } catch(e) {} }
+function save() { try { localStorage.setItem('festou_state', JSON.stringify(state)); } catch(e) {} }
+
+function getVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+
+function applyTheme(color) {
+  var r = parseInt(color.slice(1,3),16), g = parseInt(color.slice(3,5),16), b = parseInt(color.slice(5,7),16);
+  document.documentElement.style.setProperty('--accent', color);
+  document.documentElement.style.setProperty('--accent-rgb', r+','+g+','+b);
+  var hsl = rgbToHsl(r,g,b);
+  document.documentElement.style.setProperty('--accent-light', hslToHex(hsl[0], Math.min(hsl[1],0.6), Math.min(hsl[2]+0.25,0.85)));
+  document.documentElement.style.setProperty('--accent-dark', hslToHex(hsl[0], hsl[1], Math.max(hsl[2]-0.15,0.2)));
+}
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;var mx=Math.max(r,g,b),mn=Math.min(r,g,b);var h=0,s=0,l=(mx+mn)/2;if(mx!==mn){var d=mx-mn;s=l>0.5?d/(2-mx-mn):d/(mx+mn);if(mx===r)h=((g-b)/d+(g<b?6:0))/6;else if(mx===g)h=((b-r)/d+2)/6;else h=((r-g)/d+4)/6;}return[h,s,l];}
+function hslToHex(h,s,l){var r,g,b;if(s===0){r=g=b=l;}else{function hue2rgb(p,q,t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;}var q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;r=hue2rgb(p,q,h+1/3);g=hue2rgb(p,q,h);b=hue2rgb(p,q,h-1/3);}var toHex=function(x){var hex=Math.round(x*255).toString(16);return hex.length===1?'0'+hex:hex;};return '#'+toHex(r)+toHex(g)+toHex(b);}
+
+function hideAll() {
+  document.getElementById('onboarding').classList.remove('active');
+  document.getElementById('welcome').classList.remove('active');
+  var ids = ['partyList','createParty','dashboard'];
+  for (var i=0;i<ids.length;i++) document.getElementById(ids[i]).classList.remove('active');
+}
+function showView(id) { hideAll(); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+
+function initOnboarding() {
+  var grid = document.getElementById('colorGrid');
+  var html = '';
+  for (var i=0;i<COLORS.length;i++) {
+    html += '<div class="color-swatch" style="background:'+COLORS[i]+'" onclick="selectColor(\''+COLORS[i]+'\')"></div>';
+  }
+  grid.innerHTML = html;
+  document.getElementById('customColor').onchange = function(){ selectColor(this.value); };
+  document.getElementById('customColor').oninput = function(){ selectColor(this.value); };
+}
+
+function selectColor(c) {
+  state.accentColor = c;
+  applyTheme(c);
+  var swatches = document.querySelectorAll('.color-swatch');
+  for (var i=0;i<swatches.length;i++) {
+    var bg = rgbStringToHex(swatches[i].style.background);
+    swatches[i].classList.toggle('selected', bg === c.toLowerCase());
+  }
+  document.getElementById('customColor').value = c;
+}
+function rgbStringToHex(rgb) {
+  var m = rgb.match(/\d+/g);
+  if (!m) return rgb;
+  var r = parseInt(m[0]).toString(16), g = parseInt(m[1]).toString(16), b = parseInt(m[2]).toString(16);
+  if (r.length===1) r='0'+r; if (g.length===1) g='0'+g; if (b.length===1) b='0'+b;
+  return '#'+r+g+b;
+}
+
+function finishOnboarding() {
+  var name = document.getElementById('userName').value.trim();
+  if (!name) { toast('Digite seu nome para continuar'); return; }
+  state.userName = name;
+  state.onboarded = true;
+  save();
+  document.getElementById('welcomeName').textContent = state.userName;
+  showView('welcome');
+}
+
+function showPartyList() {
+  state.currentPartyId = null; save();
+  if (state.parties.length === 0) { showView('welcome'); document.getElementById('welcomeName').textContent = state.userName; return; }
+  showView('partyList');
+  document.getElementById('greetingText').textContent = 'Olá, ' + state.userName + '!';
+  renderPartyCards();
+}
+function renderPartyCards() {
+  var c = document.getElementById('partyCardsContainer');
+  if (state.parties.length === 0) { c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎈</div><p>Nenhuma festa criada</p></div>'; return; }
+  var html = '<div class="party-cards">';
+  for (var i=0;i<state.parties.length;i++) {
+    var p = state.parties[i], g = p.guests||[], conf = 0;
+    for (var j=0;j<g.length;j++) if (g[j].status==='confirmed') conf++;
+    var type = null; for (var k=0;k<PARTY_TYPES.length;k++) if (PARTY_TYPES[k].id===p.type) type=PARTY_TYPES[k];
+    var icon = type ? type.icon : '🎊', dateStr = p.date ? formatDate(p.date) : '';
+    html += '<div class="party-card" onclick="openParty(\''+p.id+'\')">' +
+      '<div class="party-card-title">'+icon+' '+escHtml(p.name||p.type)+'</div>' +
+      '<div class="party-card-meta">'+dateStr+(p.location?' · '+escHtml(p.location):'')+'</div>' +
+      '<div class="party-card-stats"><span>'+g.length+' convidados</span><span>'+conf+' confirmados</span></div></div>';
+  }
+  c.innerHTML = html + '</div>';
+}
+function openParty(id) { state.currentPartyId = id; save(); showDashboard(); }
+
+function showCreateParty() {
+  state.selectedType = null; showView('createParty');
+  document.getElementById('step1').classList.add('active');
+  document.getElementById('step2').classList.remove('active');
+  renderTypeGrid();
+}
+function renderTypeGrid() {
+  var html = '';
+  for (var i=0;i<PARTY_TYPES.length;i++) {
+    var t = PARTY_TYPES[i];
+    html += '<div class="type-option" onclick="selectPartyType(\''+t.id+'\', this)"><span class="type-option-icon">'+t.icon+'</span>'+t.label+'</div>';
+  }
+  document.getElementById('partyTypeGrid').innerHTML = html;
+}
+function selectPartyType(id, el) {
+  state.selectedType = id;
+  var opts = document.querySelectorAll('.type-option');
+  for (var i=0;i<opts.length;i++) opts[i].classList.remove('selected');
+  if (el) el.classList.add('selected');
+  setTimeout(function(){ goToStep(2); }, 200);
+}
+function goToStep(n) {
+  var steps = document.querySelectorAll('.form-step');
+  for (var i=0;i<steps.length;i++) steps[i].classList.remove('active');
+  document.getElementById('step'+n).classList.add('active');
+  if (n === 2) renderDynamicFields();
+}
+
+function renderDynamicFields() {
+  var t = state.selectedType, fields = [];
+  if (t === 'birthday') {
+    fields = [{id:'bName',label:'Nome do aniversariante',type:'text'},{id:'bAge',label:'Quantos anos vai fazer',type:'number'},{id:'bTheme',label:'Tema da festa',type:'text'},{id:'bDate',label:'Data da festa',type:'date'},{id:'bStart',label:'Horário de início',type:'time'},{id:'bEnd',label:'Horário de término',type:'time'},{id:'bLocation',label:'Local da festa',type:'text'},{id:'bAddress',label:'Endereço completo',type:'text'},{id:'bDress',label:'Tipo de traje',type:'select',options:DRESS_CODES}];
+  } else if (t === 'wedding') {
+    fields = [{id:'bName',label:'Nomes dos noivos',type:'text'},{id:'bTheme',label:'Tema / estilo',type:'text'},{id:'bDate',label:'Data',type:'date'},{id:'bStart',label:'Horário da cerimônia',type:'time'},{id:'bEnd',label:'Horário previsto de término',type:'time'},{id:'bLocation',label:'Local da cerimônia',type:'text'},{id:'bReception',label:'Local da recepção',type:'text'},{id:'bAddress',label:'Endereço',type:'text'},{id:'bDress',label:'Traje',type:'select',options:DRESS_CODES}];
+  } else if (t === 'halloween') {
+    fields = [{id:'bName',label:'Nome da festa',type:'text'},{id:'bTheme',label:'Tema específico',type:'text'},{id:'bDate',label:'Data',type:'date'},{id:'bStart',label:'Horário de início',type:'time'},{id:'bEnd',label:'Horário de término',type:'time'},{id:'bLocation',label:'Local',type:'text'},{id:'bAddress',label:'Endereço',type:'text'},{id:'bDress',label:'Traje',type:'select',options:['Fantasia','Livre','Outro']}];
+  } else {
+    fields = [{id:'bName',label:'Nome da festa',type:'text'},{id:'bTheme',label:'Tema',type:'text'},{id:'bDate',label:'Data',type:'date'},{id:'bStart',label:'Horário de início',type:'time'},{id:'bEnd',label:'Horário de término',type:'time'},{id:'bLocation',label:'Local',type:'text'},{id:'bAddress',label:'Endereço completo',type:'text'},{id:'bDress',label:'Tipo de traje',type:'select',options:DRESS_CODES}];
+  }
+  var html = '';
+  for (var i=0;i<fields.length;i++) {
+    var f = fields[i];
+    if (f.type === 'select') {
+      var opts = '';
+      for (var j=0;j<f.options.length;j++) opts += '<option>'+f.options[j]+'</option>';
+      html += '<div class="field-group"><label class="field-label">'+f.label+'</label><select id="'+f.id+'">'+opts+'</select><input type="text" id="'+f.id+'Extra" placeholder="Especifique..." style="margin-top:8px;display:none"></div>';
+    } else {
+      html += '<div class="field-group"><label class="field-label">'+f.label+'</label><input type="'+f.type+'" id="'+f.id+'"></div>';
+    }
+  }
+  document.getElementById('dynamicFields').innerHTML = html;
+  var ds = document.getElementById('bDress');
+  if (ds) ds.onchange = function() {
+    var extra = document.getElementById('bDressExtra');
+    if (!extra) return;
+    var v = ds.value;
+    extra.style.display = (v==='Fantasia'||v==='Roupa de determinada cor'||v==='Outro') ? 'block' : 'none';
+  };
+}
+
+function saveParty() {
+  var name = getVal('bName');
+  if (!name.trim()) { toast('Preencha o nome da festa'); return; }
+  var party = { id:'p_'+Date.now(), type:state.selectedType, name:name.trim(), theme:getVal('bTheme'), date:getVal('bDate'), startTime:getVal('bStart'), endTime:getVal('bEnd'), location:getVal('bLocation'), address:getVal('bAddress'), reception:getVal('bReception'), dressCode:getVal('bDress'), dressExtra:getVal('bDressExtra'), age:getVal('bAge'), guests:[], expenses:[], maxBudget:0 };
+  state.parties.push(party); state.currentPartyId = party.id; save(); toast('Festa criada!'); showDashboard();
+}
+
+function currentParty() {
+  for (var i=0;i<state.parties.length;i++) if (state.parties[i].id===state.currentPartyId) return state.parties[i];
+  return null;
+}
+function findType(id) { for (var i=0;i<PARTY_TYPES.length;i++) if (PARTY_TYPES[i].id===id) return PARTY_TYPES[i]; return null; }
+
+function showDashboard() {
+  var p = currentParty(); if (!p) { showPartyList(); return; }
+  showView('dashboard'); switchTab('overview', document.querySelector('.tab-btn')); renderDashboard();
+}
+function renderDashboard() {
+  var p = currentParty(); if (!p) return;
+  var typeObj = findType(p.type), icon = typeObj ? typeObj.icon : '🎊';
+  document.getElementById('dashTitle').textContent = icon + ' ' + p.name;
+  var parts = [];
+  if (p.date) parts.push(formatDate(p.date));
+  if (p.startTime) parts.push(p.startTime);
+  if (p.location) parts.push(p.location);
+  document.getElementById('dashMeta').textContent = parts.join(' · ');
+  var cd = document.getElementById('dashCountdown');
+  if (p.date) { var days = daysUntil(p.date); if (days>0) cd.textContent='⏳ '+days+' dia'+(days>1?'s':'')+' para a festa'; else if (days===0) cd.textContent='🎉 A festa é hoje!'; else cd.textContent='✅ Festa realizada há '+Math.abs(days)+' dia'+(Math.abs(days)>1?'s':''); cd.style.display='inline-flex'; } else { cd.style.display='none'; }
+  renderOverview(p); renderInfoGrid(p); renderKanban(p); renderBudget(p);
+}
+
+function renderOverview(p) {
+  var g=p.guests||[],conf=0,maybe=0,no=0,totalPlanned=0,totalPaid=0;
+  for(var i=0;i<g.length;i++){if(g[i].status==='confirmed')conf++;else if(g[i].status==='maybe')maybe++;else no++;}
+  var exp=p.expenses||[];for(var i=0;i<exp.length;i++){totalPlanned+=(exp[i].planned||0);totalPaid+=(exp[i].paid||0);}
+  var remaining=totalPlanned-totalPaid;
+  document.getElementById('overviewStats').innerHTML=
+    '<div class="stat-card"><div class="stat-label">Total de convidados</div><div class="stat-value accent">'+g.length+'</div></div>'+
+    '<div class="stat-card"><div class="stat-label">Confirmados</div><div class="stat-value green">'+conf+'</div></div>'+
+    '<div class="stat-card"><div class="stat-label">Em dúvida</div><div class="stat-value yellow">'+maybe+'</div></div>'+
+    '<div class="stat-card"><div class="stat-label">Não convidar</div><div class="stat-value red">'+no+'</div></div>'+
+    (p.maxBudget?'<div class="stat-card"><div class="stat-label">Orçamento</div><div class="stat-value">R$ '+fmt(p.maxBudget)+'</div></div>':'')+
+    '<div class="stat-card"><div class="stat-label">Valor previsto</div><div class="stat-value">R$ '+fmt(totalPlanned)+'</div></div>'+
+    '<div class="stat-card"><div class="stat-label">Valor pago</div><div class="stat-value green">R$ '+fmt(totalPaid)+'</div></div>'+
+    '<div class="stat-card"><div class="stat-label">A pagar</div><div class="stat-value '+(remaining>0?'yellow':'')+'">R$ '+fmt(remaining)+'</div></div>'+
+    (p.maxBudget?'<div class="stat-card"><div class="stat-label">Saldo disponível</div><div class="stat-value '+((p.maxBudget-totalPlanned)<0?'red':'green')+'">R$ '+fmt(p.maxBudget-totalPlanned)+'</div></div>':'');
+}
+
+function renderInfoGrid(p) {
+  var typeObj=findType(p.type);
+  var items=[['Tipo',typeObj?typeObj.label:p.type],['Tema',p.theme],['Data',p.date?formatDate(p.date):''],['Horário',(p.startTime&&p.endTime)?p.startTime+' – '+p.endTime:(p.startTime||p.endTime||'')],['Local',p.location],['Endereço',p.address],['Traje',p.dressCode+(p.dressExtra?' ('+p.dressExtra+')':'')]];
+  if(p.age)items.splice(1,0,['Idade',p.age+' anos']);
+  if(p.reception)items.push(['Recepção',p.reception]);
+  var html='';
+  for(var i=0;i<items.length;i++){if(items[i][1])html+='<div class="info-item"><div class="info-label">'+items[i][0]+'</div><div class="info-value">'+escHtml(items[i][1])+'</div></div>';}
+  document.getElementById('infoGrid').innerHTML=html;
+}
+
+function renderKanban(p) {
+  var g=p.guests||[],cols=['confirmed','maybe','no'],labels={confirmed:'Confirmados',maybe:'Em dúvida',no:'Não convidar'};
+  var html='';
+  for(var c=0;c<cols.length;c++){
+    var col=cols[c],items=[];
+    for(var i=0;i<g.length;i++)if(g[i].status===col)items.push(g[i]);
+    html+='<div class="kanban-col '+col+'" data-status="'+col+'" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event,\''+col+'\')">';
+    html+='<div class="kanban-col-header"><span>'+labels[col]+'</span><span class="kanban-count">'+items.length+'</span></div>';
+    for(var j=0;j<items.length;j++){
+      html+='<div class="guest-card" draggable="true" data-guest-id="'+items[j].id+'" ondragstart="handleDragStart(event,\''+items[j].id+'\')" ondragend="handleDragEnd(event)"><span>'+escHtml(items[j].name)+'</span><div class="guest-card-actions"><button class="guest-action-btn" onclick="editGuest(\''+items[j].id+'\')">✎</button><button class="guest-action-btn" onclick="removeGuest(\''+items[j].id+'\')">✕</button></div></div>';
+    }
+    html+='</div>';
+  }
+  document.getElementById('kanbanBoard').innerHTML=html;
+  initTouchDrag();
+}
+
+function addGuest() {
+  var p=currentParty();if(!p)return;var name=document.getElementById('guestNameInput').value.trim();
+  if(!name){toast('Digite o nome do convidado');return;}
+  for(var i=0;i<(p.guests||[]).length;i++)if(p.guests[i].name.toLowerCase()===name.toLowerCase()){toast('Esse convidado já está na lista');return;}
+  if(!p.guests)p.guests=[];p.guests.push({id:'g_'+Date.now(),name:name,status:document.getElementById('guestStatusSelect').value});
+  save();document.getElementById('guestNameInput').value='';renderKanban(p);renderOverview(p);
+}
+function removeGuest(id){var p=currentParty();if(!p)return;var ng=[];for(var i=0;i<(p.guests||[]).length;i++)if(p.guests[i].id!==id)ng.push(p.guests[i]);p.guests=ng;save();renderKanban(p);renderOverview(p);}
+function editGuest(id){var p=currentParty();if(!p)return;var g=null;for(var i=0;i<(p.guests||[]).length;i++)if(p.guests[i].id===id)g=p.guests[i];if(!g)return;var newName=prompt('Novo nome:',g.name);if(newName&&newName.trim()){for(var i=0;i<p.guests.length;i++)if(p.guests[i].id!==id&&p.guests[i].name.toLowerCase()===newName.trim().toLowerCase()){toast('Esse nome já existe');return;}g.name=newName.trim();save();renderKanban(p);}}
+
+function handleDragStart(e,id){draggedGuestId=id;e.target.classList.add('dragging');e.dataTransfer.effectAllowed='move';}
+function handleDragEnd(e){e.target.classList.remove('dragging');}
+function handleDragOver(e){e.preventDefault();e.currentTarget.classList.add('drag-over');}
+function handleDragLeave(e){e.currentTarget.classList.remove('drag-over');}
+function handleDrop(e,newStatus){e.preventDefault();e.currentTarget.classList.remove('drag-over');if(!draggedGuestId)return;var p=currentParty();if(!p)return;for(var i=0;i<(p.guests||[]).length;i++)if(p.guests[i].id===draggedGuestId){p.guests[i].status=newStatus;break;}save();renderKanban(p);renderOverview(p);draggedGuestId=null;}
+
+function initTouchDrag(){var cards=document.querySelectorAll('.guest-card');for(var i=0;i<cards.length;i++)cards[i].ontouchstart=touchStart;}
+function touchStart(e){if(e.target.closest&&e.target.closest('.guest-action-btn'))return;var card=this;touchDragEl=card;touchMoved=false;var t=e.touches[0];touchStartX=t.clientX;touchStartY=t.clientY;
+function move(ev){var touch=ev.touches[0],dx=touch.clientX-touchStartX,dy=touch.clientY-touchStartY;if(!touchMoved&&Math.abs(dx)+Math.abs(dy)<10)return;ev.preventDefault();touchMoved=true;if(!touchClone){touchClone=card.cloneNode(true);touchClone.style.position='fixed';touchClone.style.zIndex='999';touchClone.style.width=card.offsetWidth+'px';touchClone.style.opacity='0.85';touchClone.style.pointerEvents='none';document.body.appendChild(touchClone);card.style.opacity='0.3';}touchClone.style.left=(touch.clientX-card.offsetWidth/2)+'px';touchClone.style.top=(touch.clientY-20)+'px';var cols=document.querySelectorAll('.kanban-col');for(var i=0;i<cols.length;i++){var r=cols[i].getBoundingClientRect();if(touch.clientX>=r.left&&touch.clientX<=r.right&&touch.clientY>=r.top&&touch.clientY<=r.bottom)cols[i].classList.add('drag-over');else cols[i].classList.remove('drag-over');}}
+function end(ev){document.removeEventListener('touchmove',move);document.removeEventListener('touchend',end);if(touchClone){document.body.removeChild(touchClone);touchClone=null;}if(touchDragEl)touchDragEl.style.opacity='1';if(touchMoved){var touch=ev.changedTouches[0];var cols=document.querySelectorAll('.kanban-col');for(var i=0;i<cols.length;i++){cols[i].classList.remove('drag-over');var r=cols[i].getBoundingClientRect();if(touch.clientX>=r.left&&touch.clientX<=r.right&&touch.clientY>=r.top&&touch.clientY<=r.bottom){var guestId=touchDragEl.getAttribute('data-guest-id');var newStatus=cols[i].getAttribute('data-status');var p=currentParty();if(p&&guestId){for(var j=0;j<(p.guests||[]).length;j++)if(p.guests[j].id===guestId){p.guests[j].status=newStatus;break;}save();renderKanban(p);renderOverview(p);}}}}touchDragEl=null;touchMoved=false;}
+document.addEventListener('touchmove',move,{passive:false});document.addEventListener('touchend',end);}
+
+function renderBudget(p){
+  document.getElementById('maxBudgetInput').value=p.maxBudget||'';var exp=p.expenses||[],totalPlanned=0,totalPaid=0;
+  for(var i=0;i<exp.length;i++){totalPlanned+=(exp[i].planned||0);totalPaid+=(exp[i].paid||0);}var toPay=totalPlanned-totalPaid;
+  document.getElementById('budgetSummary').innerHTML=(p.maxBudget?'<div class="stat-card"><div class="stat-label">Orçamento</div><div class="stat-value">R$ '+fmt(p.maxBudget)+'</div></div>':'')+'<div class="stat-card"><div class="stat-label">Previsto</div><div class="stat-value">R$ '+fmt(totalPlanned)+'</div></div><div class="stat-card"><div class="stat-label">Pago</div><div class="stat-value green">R$ '+fmt(totalPaid)+'</div></div><div class="stat-card"><div class="stat-label">A pagar</div><div class="stat-value yellow">R$ '+fmt(toPay)+'</div></div>'+(p.maxBudget?'<div class="stat-card"><div class="stat-label">Saldo</div><div class="stat-value '+((p.maxBudget-totalPlanned)<0?'red':'green')+'">R$ '+fmt(p.maxBudget-totalPlanned)+'</div></div>':'');
+  var al=document.getElementById('budgetAlert');
+  if(p.maxBudget&&totalPlanned>p.maxBudget)al.innerHTML='<div class="alert-over">⚠️ Gastos ultrapassam o orçamento em R$ '+fmt(totalPlanned-p.maxBudget)+'</div>';else al.innerHTML='';
+  var sl={paid:'Pago',pending:'Parcial',unpaid:'A pagar'},tbody=document.getElementById('budgetBody');
+  if(exp.length===0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text-tertiary);padding:24px">Nenhuma despesa adicionada</td></tr>';}
+  else{var h='';for(var i=0;i<exp.length;i++){var e=exp[i];h+='<tr><td>'+escHtml(e.category)+'</td><td>'+escHtml(e.name)+'</td><td>'+escHtml(e.vendor)+'</td><td>R$ '+fmt(e.planned)+'</td><td>R$ '+fmt(e.paid)+'</td><td><span class="status-badge '+e.payStatus+'">'+(sl[e.payStatus]||e.payStatus)+'</span></td><td><button class="guest-action-btn" onclick="editExpense('+i+')">✎</button><button class="guest-action-btn" onclick="removeExpense('+i+')">✕</button></td></tr>';}tbody.innerHTML=h;}
+}
+function saveMaxBudget(){var p=currentParty();if(!p)return;p.maxBudget=parseFloat(document.getElementById('maxBudgetInput').value)||0;save();renderBudget(p);renderOverview(p);}
+function showAddExpenseModal(){state.editingExpenseIdx=null;document.getElementById('expenseModalTitle').textContent='Adicionar Despesa';document.getElementById('expCat').value='Buffet';document.getElementById('expName').value='';document.getElementById('expVendor').value='';document.getElementById('expPlanned').value='';document.getElementById('expPaid').value='';document.getElementById('expStatus').value='unpaid';openModal('expenseModal');}
+function editExpense(idx){var p=currentParty();if(!p)return;var e=p.expenses[idx];if(!e)return;state.editingExpenseIdx=idx;document.getElementById('expenseModalTitle').textContent='Editar Despesa';document.getElementById('expCat').value=e.category;document.getElementById('expName').value=e.name;document.getElementById('expVendor').value=e.vendor;document.getElementById('expPlanned').value=e.planned;document.getElementById('expPaid').value=e.paid;document.getElementById('expStatus').value=e.payStatus;openModal('expenseModal');}
+function saveExpense(){var p=currentParty();if(!p)return;var expense={category:document.getElementById('expCat').value,name:document.getElementById('expName').value.trim(),vendor:document.getElementById('expVendor').value.trim(),planned:parseFloat(document.getElementById('expPlanned').value)||0,paid:parseFloat(document.getElementById('expPaid').value)||0,payStatus:document.getElementById('expStatus').value};if(!expense.name){toast('Informe o serviço ou produto');return;}if(!p.expenses)p.expenses=[];if(state.editingExpenseIdx!==null)p.expenses[state.editingExpenseIdx]=expense;else p.expenses.push(expense);save();closeModal('expenseModal');renderBudget(p);renderOverview(p);toast(state.editingExpenseIdx!==null?'Despesa atualizada':'Despesa adicionada');}
+function removeExpense(idx){var p=currentParty();if(!p)return;p.expenses.splice(idx,1);save();renderBudget(p);renderOverview(p);}
+
+function editCurrentParty(){var p=currentParty();if(!p)return;var fields=[{id:'eName',label:'Nome',value:p.name},{id:'eTheme',label:'Tema',value:p.theme},{id:'eDate',label:'Data',value:p.date,type:'date'},{id:'eStart',label:'Início',value:p.startTime,type:'time'},{id:'eEnd',label:'Término',value:p.endTime,type:'time'},{id:'eLocation',label:'Local',value:p.location},{id:'eAddress',label:'Endereço',value:p.address},{id:'eDress',label:'Traje',value:p.dressCode}];var h='';for(var i=0;i<fields.length;i++){var f=fields[i];h+='<div class="field-group"><label class="field-label">'+f.label+'</label><input type="'+(f.type||'text')+'" id="'+f.id+'" value="'+escAttr(f.value||'')+'"></div>';}document.getElementById('editFields').innerHTML=h;openModal('editModal');}
+function saveEditParty(){var p=currentParty();if(!p)return;p.name=document.getElementById('eName').value.trim()||p.name;p.theme=document.getElementById('eTheme').value.trim();p.date=document.getElementById('eDate').value;p.startTime=document.getElementById('eStart').value;p.endTime=document.getElementById('eEnd').value;p.location=document.getElementById('eLocation').value.trim();p.address=document.getElementById('eAddress').value.trim();p.dressCode=document.getElementById('eDress').value.trim();save();closeModal('editModal');renderDashboard();toast('Festa atualizada');}
+function deleteCurrentParty(){
+  document.getElementById('confirmTitle').textContent='Excluir festa';
+  document.getElementById('confirmMsg').textContent='Tem certeza que deseja excluir esta festa? Esta ação não pode ser desfeita.';
+  document.getElementById('confirmBtn').setAttribute('onclick','doDeleteParty()');
+  openModal('confirmModal');
+}
+function doDeleteParty(){var ng=[];for(var i=0;i<state.parties.length;i++)if(state.parties[i].id!==state.currentPartyId)ng.push(state.parties[i]);state.parties=ng;state.currentPartyId=null;save();closeModal('confirmModal');showPartyList();toast('Festa excluída');}
+
+function switchTab(tab,btn){var tabs=document.querySelectorAll('.tab-content');for(var i=0;i<tabs.length;i++)tabs[i].style.display='none';var btns=document.querySelectorAll('.tab-btn');for(var i=0;i<btns.length;i++)btns[i].classList.remove('active');document.getElementById('tab-'+tab).style.display='block';if(btn)btn.classList.add('active');}
+function openModal(id){document.getElementById(id).classList.add('active');}
+function closeModal(id){document.getElementById(id).classList.remove('active');}
+function formatDate(d){if(!d)return'';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+function daysUntil(d){var target=new Date(d+'T00:00:00'),today=new Date();today.setHours(0,0,0,0);return Math.ceil((target-today)/86400000);}
+function fmt(n){return(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function escHtml(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+function escAttr(s){return(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
+function goBack(){if(state.parties.length>0)showPartyList();else{showView('welcome');document.getElementById('welcomeName').textContent=state.userName;}}
+
+document.addEventListener('keydown',function(e){if(e.key==='Enter'&&document.activeElement&&document.activeElement.id==='guestNameInput')addGuest();});
+
+load();
+if(state.onboarded){
+  applyTheme(state.accentColor);
+  if(state.currentPartyId&&currentParty())showDashboard();
+  else if(state.parties.length>0)showPartyList();
+  else{showView('welcome');document.getElementById('welcomeName').textContent=state.userName;}
+}else{initOnboarding();applyTheme(state.accentColor);}
+</script>
+</body>
+</html>
