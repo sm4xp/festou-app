@@ -1776,25 +1776,79 @@ function renderContentView() {
           totalPaid += (expenses[k].paid || 0);
         }
 
-        var typeIcon = '';
+        var typeIcon = '', typeLabel = '';
         for (var t = 0; t < PARTY_TYPES.length; t++) {
-          if (PARTY_TYPES[t].id === p.type) { typeIcon = PARTY_TYPES[t].icon; break; }
+          if (PARTY_TYPES[t].id === p.type) { typeIcon = PARTY_TYPES[t].icon; typeLabel = PARTY_TYPES[t].label; break; }
         }
 
         h += '<div class="content-party">';
-        h += '<div class="content-party-title">' + (typeIcon || '🎉') + ' ' + escHtml(p.name || 'Sem nome') + '</div>';
-        h += '<div class="content-party-details">';
-        if (p.date) h += '<span class="content-badge neutral">📅 ' + formatDate(p.date) + '</span>';
-        if (p.location) h += '<span class="content-badge neutral">📍 ' + escHtml(p.location) + '</span>';
+        h += '<div class="content-party-title">' + (typeIcon || '🎉') + ' ' + escHtml(p.name || 'Sem nome');
+        if (p.splitCost === 'split') h += ' <span class="content-badge yellow" style="font-size:10px;vertical-align:middle">Dividido</span>';
+        h += '</div>';
+
+        // Info da festa
+        h += '<div class="content-party-info" style="display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--text-secondary);margin-bottom:8px">';
+        if (typeLabel) h += '<span>📌 ' + escHtml(typeLabel) + '</span>';
+        if (p.date) h += '<span>📅 ' + formatDate(p.date) + '</span>';
+        if (p.startTime) h += '<span>🕐 ' + escHtml(p.startTime) + (p.endTime ? ' – ' + escHtml(p.endTime) : '') + '</span>';
+        if (p.location) h += '<span>📍 ' + escHtml(p.location) + '</span>';
+        if (p.address) h += '<span>🏠 ' + escHtml(p.address) + '</span>';
+        if (p.theme) h += '<span>🎨 ' + escHtml(p.theme) + '</span>';
+        if (p.dressCode) h += '<span>👔 ' + escHtml(p.dressCode) + (p.dressExtra ? ' (' + escHtml(p.dressExtra) + ')' : '') + '</span>';
+        if (p.age) h += '<span>🎂 ' + escHtml(p.age) + ' anos</span>';
+        h += '</div>';
+
+        // Badges resumo
+        h += '<div class="content-party-details" style="margin-bottom:8px">';
         h += '<span class="content-badge green">✅ ' + conf + ' confirmado' + (conf !== 1 ? 's' : '') + '</span>';
         if (maybe > 0) h += '<span class="content-badge yellow">🤔 ' + maybe + ' em dúvida</span>';
         if (no > 0) h += '<span class="content-badge red">❌ ' + no + '</span>';
         if (guests.length > 0) h += '<span class="content-badge neutral">👥 ' + guests.length + ' total</span>';
-        if (expenses.length > 0) {
-          h += '<span class="content-badge neutral">💰 R$ ' + fmt(totalPlanned) + ' planejado</span>';
-          h += '<span class="content-badge neutral">💳 R$ ' + fmt(totalPaid) + ' pago</span>';
+        if (totalPlanned > 0) h += '<span class="content-badge neutral">💰 R$ ' + fmt(totalPlanned) + ' planejado</span>';
+        if (totalPaid > 0) h += '<span class="content-badge neutral">💳 R$ ' + fmt(totalPaid) + ' pago</span>';
+        if (p.splitCost === 'split' && conf > 0 && totalPlanned > 0) h += '<span class="content-badge yellow">👤 R$ ' + fmt(totalPlanned / conf) + '/pessoa</span>';
+        h += '</div>';
+
+        // Lista de convidados
+        if (guests.length > 0) {
+          var statusLabels = {confirmed:'Confirmado', maybe:'Em dúvida', no:'Não convidar'};
+          var statusColors = {confirmed:'var(--green)', maybe:'var(--yellow)', no:'var(--red)'};
+          h += '<div style="margin-bottom:8px"><div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:4px">Convidados (' + guests.length + ')</div>';
+          h += '<div style="display:flex;flex-wrap:wrap;gap:4px">';
+          for (var k = 0; k < guests.length; k++) {
+            var g = guests[k];
+            var sColor = statusColors[g.status] || 'var(--text-tertiary)';
+            h += '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:12px;font-size:11px;background:var(--bg-input);border:1px solid var(--border)">';
+            h += '<span style="width:6px;height:6px;border-radius:50%;background:' + sColor + ';flex-shrink:0"></span>';
+            h += escHtml(g.name);
+            h += '</span>';
+          }
+          h += '</div></div>';
         }
-        h += '</div></div>';
+
+        // Lista de despesas
+        if (expenses.length > 0) {
+          var payLabels = {paid:'Pago', pending:'Parcial', unpaid:'A pagar'};
+          var payColors = {paid:'var(--green)', pending:'var(--yellow)', unpaid:'var(--red)'};
+          h += '<div><div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:4px">Despesas (' + expenses.length + ')</div>';
+          h += '<div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse">';
+          h += '<tr style="text-align:left;color:var(--text-tertiary);border-bottom:1px solid var(--border)"><th style="padding:4px 6px">Categoria</th><th style="padding:4px 6px">Serviço</th><th style="padding:4px 6px">Fornecedor</th><th style="padding:4px 6px">Previsto</th><th style="padding:4px 6px">Pago</th><th style="padding:4px 6px">Status</th></tr>';
+          for (var k = 0; k < expenses.length; k++) {
+            var e = expenses[k];
+            var pColor = payColors[e.payStatus] || 'var(--text-tertiary)';
+            h += '<tr style="border-bottom:1px solid var(--border)">';
+            h += '<td style="padding:4px 6px">' + escHtml(e.category || '') + '</td>';
+            h += '<td style="padding:4px 6px">' + escHtml(e.name || '') + '</td>';
+            h += '<td style="padding:4px 6px">' + escHtml(e.vendor || '') + '</td>';
+            h += '<td style="padding:4px 6px">R$ ' + fmt(e.planned) + '</td>';
+            h += '<td style="padding:4px 6px">R$ ' + fmt(e.paid) + '</td>';
+            h += '<td style="padding:4px 6px"><span style="color:' + pColor + '">' + (payLabels[e.payStatus] || e.payStatus || '') + '</span></td>';
+            h += '</tr>';
+          }
+          h += '</table></div></div>';
+        }
+
+        h += '</div>';
       }
     }
     h += '</div>';
