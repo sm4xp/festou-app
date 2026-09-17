@@ -750,6 +750,21 @@ textarea { resize: vertical; min-height: 80px; }
 }
 .access-pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
 .access-pagination button:hover:not(:disabled) { background: var(--bg-input); }
+.pin-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  transition: background 0.15s, border-color 0.15s;
+}
+.pin-dot.filled {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.admin-logo-tap {
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+}
 
 @media (max-width: 600px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -811,24 +826,20 @@ textarea { resize: vertical; min-height: 80px; }
 
 <!-- WELCOME -->
 <div id="welcome" class="welcome-screen">
-  <div class="welcome-emoji">🎉</div>
+  <div class="welcome-emoji admin-logo-tap" onclick="adminTap()">🎉</div>
   <h1 class="welcome-title">Bem-vindo ao Festou, <span id="welcomeName"></span>!</h1>
   <p style="color: var(--text-secondary)">Vamos planejar sua festa?</p>
   <button class="btn" onclick="showCreateParty()">Criar Festa</button>
-  <button class="btn btn-outline btn-sm" onclick="showAccessView()" style="margin-top:8px">Ver acessos</button>
 </div>
 
 <!-- PARTY LIST -->
 <div id="partyList" class="view">
   <div class="party-list-header">
     <div>
-      <h1><svg class="festou-logo-small" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lgS" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="var(--accent)"/><stop offset="100%" stop-color="var(--accent-light)"/></linearGradient></defs><circle cx="40" cy="40" r="38" fill="url(#lgS)"/><path d="M28 58V32l12-18 12 18v26" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 42h24" stroke="white" stroke-width="3" stroke-linecap="round"/><path d="M28 50h24" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="18" cy="20" r="3.5" fill="#FFD54F"/><circle cx="62" cy="18" r="3" fill="#81D4FA"/><circle cx="52" cy="10" r="2.5" fill="#CE93D8"/></svg>Festou</h1>
+      <h1><span class="admin-logo-tap" onclick="adminTap()"><svg class="festou-logo-small" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lgS" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="var(--accent)"/><stop offset="100%" stop-color="var(--accent-light)"/></linearGradient></defs><circle cx="40" cy="40" r="38" fill="url(#lgS)"/><path d="M28 58V32l12-18 12 18v26" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 42h24" stroke="white" stroke-width="3" stroke-linecap="round"/><path d="M28 50h24" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="18" cy="20" r="3.5" fill="#FFD54F"/><circle cx="62" cy="18" r="3" fill="#81D4FA"/><circle cx="52" cy="10" r="2.5" fill="#CE93D8"/></svg>Festou</span></h1>
       <p class="greeting-text" id="greetingText"></p>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-sm btn-outline" onclick="showAccessView()">Acessos</button>
-      <button class="btn" onclick="showCreateParty()">+ Nova Festa</button>
-    </div>
+    <button class="btn" onclick="showCreateParty()">+ Nova Festa</button>
   </div>
   <div id="partyCardsContainer"></div>
 </div>
@@ -988,6 +999,50 @@ textarea { resize: vertical; min-height: 80px; }
   </div>
 </div>
 
+<!-- ADMIN PIN MODAL -->
+<div class="modal-overlay" id="adminPinModal">
+  <div class="modal" style="max-width:360px;text-align:center">
+    <div style="font-size:40px;margin-bottom:8px">🔒</div>
+    <h3>Acesso Restrito</h3>
+    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:16px">Digite o PIN de administrador</p>
+    <div style="display:flex;justify-content:center;gap:8px;margin-bottom:8px" id="pinDots">
+      <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+    </div>
+    <input type="password" id="adminPinInput" maxlength="6" placeholder="••••••" style="text-align:center;font-size:24px;letter-spacing:8px;max-width:200px;margin:0 auto 8px" oninput="onPinInput()" onkeydown="if(event.key==='Enter')verifyPin()">
+    <p id="pinError" style="color:var(--red);font-size:13px;min-height:20px"></p>
+    <div class="modal-actions" style="justify-content:center">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('adminPinModal');document.getElementById('adminPinInput').value='';document.getElementById('pinError').textContent='';resetPinDots()">Cancelar</button>
+      <button class="btn btn-sm" onclick="verifyPin()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PIN MODAL -->
+<div class="modal-overlay" id="changePinModal">
+  <div class="modal" style="max-width:360px">
+    <h3>Alterar PIN</h3>
+    <div style="display:grid;gap:12px">
+      <div class="field-group">
+        <label class="field-label">PIN atual</label>
+        <input type="password" id="oldPinInput" maxlength="6" placeholder="••••••" style="text-align:center;font-size:20px;letter-spacing:6px">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Novo PIN (6 dígitos)</label>
+        <input type="password" id="newPinInput" maxlength="6" placeholder="••••••" style="text-align:center;font-size:20px;letter-spacing:6px">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Confirmar novo PIN</label>
+        <input type="password" id="confirmPinInput" maxlength="6" placeholder="••••••" style="text-align:center;font-size:20px;letter-spacing:6px">
+      </div>
+    </div>
+    <p id="changePinError" style="color:var(--red);font-size:13px;min-height:20px;margin-top:8px"></p>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('changePinModal')">Cancelar</button>
+      <button class="btn btn-sm" onclick="saveNewPin()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ACCESS LOG VIEW -->
 <div id="accessView" class="access-view">
   <button class="dash-back" onclick="goBackFromAccess()">&#8592; Voltar</button>
@@ -996,7 +1051,11 @@ textarea { resize: vertical; min-height: 80px; }
       <h1>Acessos da Plataforma</h1>
       <p class="greeting-text" id="accessSubtitle"></p>
     </div>
-    <button class="btn btn-sm btn-outline" onclick="clearAccessLog()">Limpar log</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-sm btn-outline" onclick="showChangePinModal()">Alterar PIN</button>
+      <button class="btn btn-sm btn-outline" onclick="clearAccessLog()">Limpar log</button>
+      <button class="btn btn-sm btn-outline" onclick="adminLogout()">Sair</button>
+    </div>
   </div>
   <div class="stats-grid" id="accessStats"></div>
   <div class="access-filters">
@@ -1333,6 +1392,100 @@ document.addEventListener('keydown',function(e){if(e.key==='Enter'&&document.act
 var accessPage = 0;
 var ACCESS_PER_PAGE = 15;
 var sessionStartTime = Date.now();
+var adminAuthenticated = false;
+var adminTapCount = 0;
+var adminTapTimer = null;
+var DEFAULT_ADMIN_PIN = '123456';
+
+function getAdminPin() {
+  try { return localStorage.getItem('festou_admin_pin') || DEFAULT_ADMIN_PIN; } catch(e) { return DEFAULT_ADMIN_PIN; }
+}
+function setAdminPin(pin) {
+  try { localStorage.setItem('festou_admin_pin', pin); } catch(e) {}
+}
+
+function adminTap() {
+  adminTapCount++;
+  if (adminTapTimer) clearTimeout(adminTapTimer);
+  adminTapTimer = setTimeout(function() { adminTapCount = 0; }, 1500);
+  if (adminTapCount >= 5) {
+    adminTapCount = 0;
+    clearTimeout(adminTapTimer);
+    if (adminAuthenticated) {
+      showAccessView();
+    } else {
+      showAdminPinModal();
+    }
+  }
+}
+
+function showAdminPinModal() {
+  document.getElementById('adminPinInput').value = '';
+  document.getElementById('pinError').textContent = '';
+  resetPinDots();
+  openModal('adminPinModal');
+  setTimeout(function() { document.getElementById('adminPinInput').focus(); }, 100);
+}
+
+function onPinInput() {
+  var val = document.getElementById('adminPinInput').value;
+  var dots = document.querySelectorAll('#pinDots .pin-dot');
+  for (var i = 0; i < dots.length; i++) {
+    dots[i].classList.toggle('filled', i < val.length);
+  }
+}
+
+function resetPinDots() {
+  var dots = document.querySelectorAll('#pinDots .pin-dot');
+  for (var i = 0; i < dots.length; i++) dots[i].classList.remove('filled');
+}
+
+function verifyPin() {
+  var input = document.getElementById('adminPinInput').value;
+  if (input === getAdminPin()) {
+    adminAuthenticated = true;
+    closeModal('adminPinModal');
+    document.getElementById('adminPinInput').value = '';
+    document.getElementById('pinError').textContent = '';
+    resetPinDots();
+    showAccessView();
+  } else {
+    document.getElementById('pinError').textContent = 'PIN incorreto';
+    document.getElementById('adminPinInput').value = '';
+    resetPinDots();
+    document.getElementById('adminPinInput').focus();
+  }
+}
+
+function adminLogout() {
+  adminAuthenticated = false;
+  showPartyList();
+  toast('Sessão admin encerrada');
+}
+
+function showChangePinModal() {
+  document.getElementById('oldPinInput').value = '';
+  document.getElementById('newPinInput').value = '';
+  document.getElementById('confirmPinInput').value = '';
+  document.getElementById('changePinError').textContent = '';
+  openModal('changePinModal');
+}
+
+function saveNewPin() {
+  var oldPin = document.getElementById('oldPinInput').value;
+  var newPin = document.getElementById('newPinInput').value;
+  var confirmPin = document.getElementById('confirmPinInput').value;
+  var errEl = document.getElementById('changePinError');
+
+  if (oldPin !== getAdminPin()) { errEl.textContent = 'PIN atual incorreto'; return; }
+  if (newPin.length !== 6 || !/^\d{6}$/.test(newPin)) { errEl.textContent = 'O novo PIN deve ter 6 dígitos numéricos'; return; }
+  if (newPin !== confirmPin) { errEl.textContent = 'Os PINs não coincidem'; return; }
+  if (newPin === oldPin) { errEl.textContent = 'O novo PIN deve ser diferente do atual'; return; }
+
+  setAdminPin(newPin);
+  closeModal('changePinModal');
+  toast('PIN alterado com sucesso');
+}
 
 function getAccessLog() {
   try { var s = localStorage.getItem('festou_access_log'); return s ? JSON.parse(s) : []; } catch(e) { return []; }
@@ -1384,6 +1537,7 @@ setInterval(updateSessionDuration, 30000);
 window.addEventListener('beforeunload', updateSessionDuration);
 
 function showAccessView() {
+  if (!adminAuthenticated) { showAdminPinModal(); return; }
   hideAll();
   document.getElementById('accessView').classList.add('active');
   window.scrollTo(0, 0);
