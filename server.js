@@ -30,6 +30,15 @@ db.exec(`
   )
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS user_data (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_name TEXT NOT NULL UNIQUE,
+    data TEXT NOT NULL DEFAULT '{}',
+    updated_at INTEGER NOT NULL
+  )
+`);
+
 const insertStmt = db.prepare(
   'INSERT INTO access_log (user_name, timestamp, device, browser, screen_width, screen_height) VALUES (?, ?, ?, ?, ?, ?)'
 );
@@ -107,6 +116,24 @@ app.get('/api/access/stats', (req, res) => {
 app.delete('/api/access', (req, res) => {
   db.exec('DELETE FROM access_log');
   res.json({ ok: true });
+});
+
+const upsertUserData = db.prepare(
+  `INSERT INTO user_data (user_name, data, updated_at) VALUES (?, ?, ?)
+   ON CONFLICT(user_name) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at`
+);
+
+app.post('/api/userdata', (req, res) => {
+  const { userName, data } = req.body;
+  if (!userName || !data) return res.status(400).json({ error: 'userName and data required' });
+  upsertUserData.run(userName, JSON.stringify(data), Date.now());
+  res.json({ ok: true });
+});
+
+app.get('/api/userdata', (req, res) => {
+  const rows = db.prepare('SELECT * FROM user_data ORDER BY updated_at DESC').all();
+  const result = rows.map(r => ({ userName: r.user_name, data: JSON.parse(r.data), updatedAt: r.updated_at }));
+  res.json(result);
 });
 
 app.get('*', (req, res) => {
