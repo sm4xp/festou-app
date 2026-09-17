@@ -646,6 +646,111 @@ textarea { resize: vertical; min-height: 80px; }
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
 
+.access-view { display: none; max-width: 900px; margin: 0 auto; padding-top: 40px; padding-bottom: 40px; }
+.access-view.active { display: block; }
+.access-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.access-header h1 { font-size: 28px; font-weight: 700; }
+.access-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.access-filters input, .access-filters select {
+  max-width: 200px;
+}
+.access-table-wrap { overflow-x: auto; }
+.access-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.access-table th {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--border);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.access-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.access-table tr:hover td { background: var(--bg-input); }
+.access-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+  color: #fff;
+  margin-right: 8px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.access-user-cell { display: flex; align-items: center; gap: 0; }
+.access-online-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  display: inline-block;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+.access-offline-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  display: inline-block;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+.access-device-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.access-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.access-pagination button {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  font-size: 13px;
+}
+.access-pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+.access-pagination button:hover:not(:disabled) { background: var(--bg-input); }
+
 @media (max-width: 600px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .budget-summary { grid-template-columns: repeat(2, 1fr); }
@@ -710,6 +815,7 @@ textarea { resize: vertical; min-height: 80px; }
   <h1 class="welcome-title">Bem-vindo ao Festou, <span id="welcomeName"></span>!</h1>
   <p style="color: var(--text-secondary)">Vamos planejar sua festa?</p>
   <button class="btn" onclick="showCreateParty()">Criar Festa</button>
+  <button class="btn btn-outline btn-sm" onclick="showAccessView()" style="margin-top:8px">Ver acessos</button>
 </div>
 
 <!-- PARTY LIST -->
@@ -719,7 +825,10 @@ textarea { resize: vertical; min-height: 80px; }
       <h1><svg class="festou-logo-small" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lgS" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="var(--accent)"/><stop offset="100%" stop-color="var(--accent-light)"/></linearGradient></defs><circle cx="40" cy="40" r="38" fill="url(#lgS)"/><path d="M28 58V32l12-18 12 18v26" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 42h24" stroke="white" stroke-width="3" stroke-linecap="round"/><path d="M28 50h24" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="18" cy="20" r="3.5" fill="#FFD54F"/><circle cx="62" cy="18" r="3" fill="#81D4FA"/><circle cx="52" cy="10" r="2.5" fill="#CE93D8"/></svg>Festou</h1>
       <p class="greeting-text" id="greetingText"></p>
     </div>
-    <button class="btn" onclick="showCreateParty()">+ Nova Festa</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-sm btn-outline" onclick="showAccessView()">Acessos</button>
+      <button class="btn" onclick="showCreateParty()">+ Nova Festa</button>
+    </div>
   </div>
   <div id="partyCardsContainer"></div>
 </div>
@@ -879,6 +988,43 @@ textarea { resize: vertical; min-height: 80px; }
   </div>
 </div>
 
+<!-- ACCESS LOG VIEW -->
+<div id="accessView" class="access-view">
+  <button class="dash-back" onclick="goBackFromAccess()">&#8592; Voltar</button>
+  <div class="access-header">
+    <div>
+      <h1>Acessos da Plataforma</h1>
+      <p class="greeting-text" id="accessSubtitle"></p>
+    </div>
+    <button class="btn btn-sm btn-outline" onclick="clearAccessLog()">Limpar log</button>
+  </div>
+  <div class="stats-grid" id="accessStats"></div>
+  <div class="access-filters">
+    <input type="text" id="accessSearch" placeholder="Buscar por nome..." oninput="renderAccessLog()">
+    <select id="accessPeriod" onchange="renderAccessLog()">
+      <option value="all">Todos os acessos</option>
+      <option value="today">Hoje</option>
+      <option value="week">Últimos 7 dias</option>
+      <option value="month">Últimos 30 dias</option>
+    </select>
+  </div>
+  <div class="access-table-wrap">
+    <table class="access-table">
+      <thead>
+        <tr>
+          <th>Usuário</th>
+          <th>Data / Hora</th>
+          <th>Dispositivo</th>
+          <th>Navegador</th>
+          <th>Tempo na sessão</th>
+        </tr>
+      </thead>
+      <tbody id="accessBody"></tbody>
+    </table>
+  </div>
+  <div class="access-pagination" id="accessPagination"></div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -917,6 +1063,7 @@ function hslToHex(h,s,l){var r,g,b;if(s===0){r=g=b=l;}else{function hue2rgb(p,q,
 function hideAll() {
   document.getElementById('onboarding').classList.remove('active');
   document.getElementById('welcome').classList.remove('active');
+  document.getElementById('accessView').classList.remove('active');
   var ids = ['partyList','createParty','dashboard'];
   for (var i=0;i<ids.length;i++) document.getElementById(ids[i]).classList.remove('active');
 }
@@ -957,6 +1104,7 @@ function finishOnboarding() {
   state.userName = name;
   state.onboarded = true;
   save();
+  logAccess();
   document.getElementById('welcomeName').textContent = state.userName;
   showView('welcome');
 }
@@ -1182,9 +1330,202 @@ function goBack(){if(state.parties.length>0)showPartyList();else{showView('welco
 
 document.addEventListener('keydown',function(e){if(e.key==='Enter'&&document.activeElement&&document.activeElement.id==='guestNameInput')addGuest();});
 
+var accessPage = 0;
+var ACCESS_PER_PAGE = 15;
+var sessionStartTime = Date.now();
+
+function getAccessLog() {
+  try { var s = localStorage.getItem('festou_access_log'); return s ? JSON.parse(s) : []; } catch(e) { return []; }
+}
+function saveAccessLog(log) {
+  try { localStorage.setItem('festou_access_log', JSON.stringify(log)); } catch(e) {}
+}
+
+function detectDevice() {
+  var ua = navigator.userAgent;
+  if (/iPad|Tablet/i.test(ua)) return 'Tablet';
+  if (/iPhone|Android.*Mobile|Mobile/i.test(ua)) return 'Celular';
+  return 'Desktop';
+}
+function detectBrowser() {
+  var ua = navigator.userAgent;
+  if (ua.indexOf('Firefox') > -1) return 'Firefox';
+  if (ua.indexOf('Edg') > -1) return 'Edge';
+  if (ua.indexOf('OPR') > -1 || ua.indexOf('Opera') > -1) return 'Opera';
+  if (ua.indexOf('Chrome') > -1) return 'Chrome';
+  if (ua.indexOf('Safari') > -1) return 'Safari';
+  return 'Outro';
+}
+
+function logAccess() {
+  var log = getAccessLog();
+  var entry = {
+    id: 'a_' + Date.now(),
+    userName: state.userName || 'Visitante',
+    timestamp: Date.now(),
+    device: detectDevice(),
+    browser: detectBrowser(),
+    screenWidth: screen.width,
+    screenHeight: screen.height
+  };
+  log.unshift(entry);
+  if (log.length > 500) log = log.slice(0, 500);
+  saveAccessLog(log);
+}
+
+function updateSessionDuration() {
+  var log = getAccessLog();
+  if (log.length > 0 && log[0].timestamp >= sessionStartTime) {
+    log[0].duration = Math.floor((Date.now() - sessionStartTime) / 1000);
+    saveAccessLog(log);
+  }
+}
+setInterval(updateSessionDuration, 30000);
+window.addEventListener('beforeunload', updateSessionDuration);
+
+function showAccessView() {
+  hideAll();
+  document.getElementById('accessView').classList.add('active');
+  window.scrollTo(0, 0);
+  accessPage = 0;
+  renderAccessStats();
+  renderAccessLog();
+}
+function goBackFromAccess() { showPartyList(); }
+
+function renderAccessStats() {
+  var log = getAccessLog();
+  var totalAccesses = log.length;
+  var uniqueUsers = {};
+  var todayCount = 0;
+  var weekCount = 0;
+  var now = Date.now();
+  var dayMs = 86400000;
+  var todayStart = new Date(); todayStart.setHours(0,0,0,0); var todayTs = todayStart.getTime();
+  var weekTs = now - 7 * dayMs;
+
+  for (var i = 0; i < log.length; i++) {
+    uniqueUsers[log[i].userName] = true;
+    if (log[i].timestamp >= todayTs) todayCount++;
+    if (log[i].timestamp >= weekTs) weekCount++;
+  }
+
+  var avgDuration = 0;
+  var durCount = 0;
+  for (var i = 0; i < log.length; i++) {
+    if (log[i].duration && log[i].duration > 0) { avgDuration += log[i].duration; durCount++; }
+  }
+  if (durCount > 0) avgDuration = Math.round(avgDuration / durCount);
+
+  document.getElementById('accessStats').innerHTML =
+    '<div class="stat-card"><div class="stat-label">Total de acessos</div><div class="stat-value accent">' + totalAccesses + '</div></div>' +
+    '<div class="stat-card"><div class="stat-label">Usuários únicos</div><div class="stat-value green">' + Object.keys(uniqueUsers).length + '</div></div>' +
+    '<div class="stat-card"><div class="stat-label">Acessos hoje</div><div class="stat-value">' + todayCount + '</div></div>' +
+    '<div class="stat-card"><div class="stat-label">Últimos 7 dias</div><div class="stat-value">' + weekCount + '</div></div>' +
+    '<div class="stat-card"><div class="stat-label">Tempo médio</div><div class="stat-value">' + formatDuration(avgDuration) + '</div></div>';
+
+  document.getElementById('accessSubtitle').textContent = totalAccesses + ' acesso' + (totalAccesses !== 1 ? 's' : '') + ' registrado' + (totalAccesses !== 1 ? 's' : '');
+}
+
+function formatDuration(seconds) {
+  if (!seconds || seconds <= 0) return '--';
+  if (seconds < 60) return seconds + 's';
+  var m = Math.floor(seconds / 60);
+  var s = seconds % 60;
+  if (m < 60) return m + 'min ' + (s > 0 ? s + 's' : '');
+  var h = Math.floor(m / 60);
+  m = m % 60;
+  return h + 'h ' + m + 'min';
+}
+
+function getAvatarColor(name) {
+  var hash = 0;
+  for (var i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  var idx = Math.abs(hash) % COLORS.length;
+  return COLORS[idx];
+}
+
+function renderAccessLog() {
+  var log = getAccessLog();
+  var search = (document.getElementById('accessSearch').value || '').trim().toLowerCase();
+  var period = document.getElementById('accessPeriod').value;
+
+  var now = Date.now();
+  var todayStart = new Date(); todayStart.setHours(0,0,0,0); var todayTs = todayStart.getTime();
+
+  var filtered = [];
+  for (var i = 0; i < log.length; i++) {
+    var entry = log[i];
+    if (search && entry.userName.toLowerCase().indexOf(search) === -1) continue;
+    if (period === 'today' && entry.timestamp < todayTs) continue;
+    if (period === 'week' && entry.timestamp < now - 7 * 86400000) continue;
+    if (period === 'month' && entry.timestamp < now - 30 * 86400000) continue;
+    filtered.push(entry);
+  }
+
+  var totalPages = Math.ceil(filtered.length / ACCESS_PER_PAGE) || 1;
+  if (accessPage >= totalPages) accessPage = totalPages - 1;
+  var start = accessPage * ACCESS_PER_PAGE;
+  var page = filtered.slice(start, start + ACCESS_PER_PAGE);
+
+  var tbody = document.getElementById('accessBody');
+  if (page.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-tertiary);padding:24px">Nenhum acesso encontrado</td></tr>';
+  } else {
+    var h = '';
+    for (var i = 0; i < page.length; i++) {
+      var e = page[i];
+      var d = new Date(e.timestamp);
+      var dateStr = pad2(d.getDate()) + '/' + pad2(d.getMonth()+1) + '/' + d.getFullYear();
+      var timeStr = pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
+      var initials = e.userName.split(' ').map(function(w){ return w.charAt(0).toUpperCase(); }).slice(0,2).join('');
+      var isRecent = (now - e.timestamp) < 300000;
+      var dotClass = isRecent ? 'access-online-dot' : 'access-offline-dot';
+      var deviceIcon = e.device === 'Celular' ? '📱' : (e.device === 'Tablet' ? '📋' : '💻');
+
+      h += '<tr>' +
+        '<td><div class="access-user-cell"><span class="' + dotClass + '"></span><span class="access-avatar" style="background:' + getAvatarColor(e.userName) + '">' + initials + '</span>' + escHtml(e.userName) + '</div></td>' +
+        '<td>' + dateStr + '<br><span style="color:var(--text-tertiary);font-size:12px">' + timeStr + '</span></td>' +
+        '<td><span class="access-device-badge">' + deviceIcon + ' ' + e.device + '</span></td>' +
+        '<td>' + escHtml(e.browser || '--') + '</td>' +
+        '<td>' + formatDuration(e.duration || 0) + '</td>' +
+        '</tr>';
+    }
+    tbody.innerHTML = h;
+  }
+
+  var pagDiv = document.getElementById('accessPagination');
+  if (filtered.length <= ACCESS_PER_PAGE) {
+    pagDiv.innerHTML = '<span>' + filtered.length + ' registro' + (filtered.length !== 1 ? 's' : '') + '</span><span></span>';
+  } else {
+    pagDiv.innerHTML =
+      '<span>Mostrando ' + (start+1) + '–' + Math.min(start + ACCESS_PER_PAGE, filtered.length) + ' de ' + filtered.length + '</span>' +
+      '<div style="display:flex;gap:8px">' +
+      '<button onclick="accessPage--;renderAccessLog()"' + (accessPage <= 0 ? ' disabled' : '') + '>&laquo; Anterior</button>' +
+      '<button onclick="accessPage++;renderAccessLog()"' + (accessPage >= totalPages-1 ? ' disabled' : '') + '>Próxima &raquo;</button></div>';
+  }
+}
+
+function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+
+function clearAccessLog() {
+  document.getElementById('confirmTitle').textContent = 'Limpar log de acessos';
+  document.getElementById('confirmMsg').textContent = 'Tem certeza que deseja apagar todo o histórico de acessos? Esta ação não pode ser desfeita.';
+  document.getElementById('confirmBtn').setAttribute('onclick', 'doClearAccessLog()');
+  openModal('confirmModal');
+}
+function doClearAccessLog() {
+  saveAccessLog([]);
+  closeModal('confirmModal');
+  renderAccessStats();
+  renderAccessLog();
+  toast('Log de acessos limpo');
+}
+
 load();
 if(state.onboarded){
   applyTheme(state.accentColor);
+  logAccess();
   if(state.currentPartyId&&currentParty())showDashboard();
   else if(state.parties.length>0)showPartyList();
   else{showView('welcome');document.getElementById('welcomeName').textContent=state.userName;}
